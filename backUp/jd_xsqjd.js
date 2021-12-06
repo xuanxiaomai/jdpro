@@ -31,15 +31,15 @@ let autoCode = '',projectId = '',helpId = '';
         console.log(`活动结束`);
         return;
     }
-    let res = [];
-    try{res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/6dylan6/updateTeam@main/shareCodes/shop.json');}catch (e) {}
-    if(!res){
-        try{res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/6dylan6/updateTeam@main/shareCodes/shop.json');}catch (e) {}
-        if(!res){res = [];}
-    }
-    if(res.length > 0){
-        autoCode = getRandomArrayElements(res,1)[0];
-    }
+    // let res = [];
+    // try{res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/6dylan6/updateTeam@main/shareCodes/shop.json');}catch (e) {}
+    // if(!res){
+    //     try{res = await getAuthorShareCode('https://cdn.jsdelivr.net/gh/6dylan6/updateTeam@main/shareCodes/shop.json');}catch (e) {}
+    //     if(!res){res = [];}
+    // }
+    // if(res.length > 0){
+    //     autoCode = getRandomArrayElements(res,1)[0];
+    // }
     mainPin = decodeURIComponent(cookiesArr[0].match(/pt_pin=(.+?);/) && cookiesArr[0].match(/pt_pin=(.+?);/)[1])
     if(cookiesArr.length>0){
         const promiseArr = cookiesArr.map((ck, index) => main(ck));
