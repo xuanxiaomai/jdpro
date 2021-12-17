@@ -1,22 +1,23 @@
 /*
-京东生鲜每日抽奖，可抽奖获得京豆，
-活动入口：京东生鲜每日抽奖
+京东我的理想家，可抽奖获得京豆，
+活动入口：京东我的理想家 https://u.jd.com/nw7Fv3T 旁边的立即抽奖
 by:小手冰凉 tg:@chianPLA
 交流群：https://t.me/jdPLA2
-脚本更新时间：2021-12-6 14:20
+脚本更新时间：2021-12-7 14:20
 脚本兼容: Node.js
 新手写脚本，难免有bug，能用且用。
 ============Quantumultx===============
 [task_local]
-#京东生鲜每日抽奖
-30 7 * * * jd_sxLottery.js, tag=京东生鲜每日抽奖, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_sxLottery.png, enabled=true
+#京东我的理想家
+10 3 * * * jd_lxLottery.js, tag=京东我的理想家, img-url=https://raw.githubusercontent.com/58xinian/icon/master/jd_lxLottery.png, enabled=true
+
  */
-const $ = new Env('京东生鲜每日抽奖');
+const $ = new Env('京东我的理想家');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 let jdNotify = true;//是否关闭通知，false打开通知推送，true关闭通知推送
-let configCode = "8041d3890db747c89ebf9442c78ec165";
+let configCode = "0628b69aed4d40c893096a6ca7119524";
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message;
 if ($.isNode()) {
@@ -95,15 +96,17 @@ console.log("开始抽奖");
 async function run() {
   try {
     for (let vo of $.taskinfo) {
-      if (vo.hasFinish === true) {
-        console.log(`任务${vo.taskName}，已完成`);
-        continue;
+      if (vo.taskType !== 4) {
+        if (vo.hasFinish === true) {
+          console.log(`任务${vo.taskName}，已完成`);
+          continue;
+        }
+        console.log(`开始做${vo.taskName}:${vo.taskItem.itemName}`);
+        await doTask(vo.taskType, vo.taskItem.itemId);
+        await $.wait(1000 * vo.viewTime)
+        await getReward(vo.taskType, vo.taskItem.itemId);
+        $.hasFinish = false;
       }
-      console.log(`开始做${vo.taskName}:${vo.taskItem.itemName}`);
-      await doTask(vo.taskType, vo.taskItem.itemId);
-      await $.wait(1000 * vo.viewTime)
-      await getReward(vo.taskType, vo.taskItem.itemId);
-      $.hasFinish = false;
     }
   } catch (e) {
     console.log(e);
