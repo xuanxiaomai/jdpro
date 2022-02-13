@@ -5,7 +5,7 @@
  * 脚本是否耗时只看args_xh.maxLength的大小
  * 上一作者说了每天最多300个商店，总上限为500个，jd_unsubscribe.js我已更新为批量取关版
  * 请提前取关至少250个商店确保京东试用脚本正常运行
- 30 7 * * * jd_try.js
+ *
  * @Address: https://github.com/X1a0He/jd_scripts_fixed/blob/main/jd_try_xh.js
  * @LastEditors: X1a0He
  */
@@ -37,7 +37,7 @@ $.innerKeyWords =
         "女用", "神油", "足力健", "老年", "老人",
         "宠物", "饲料", "丝袜", "黑丝", "磨脚",
         "脚皮", "除臭", "性感", "内裤", "跳蛋",
-        "安全套", "龟头", "阴道", "阴部"
+        "安全套", "龟头", "阴道", "阴部", "手机卡", "电话卡", "流量卡"
     ]
 //下面很重要，遇到问题请把下面注释看一遍再来问
 let args_xh = {
@@ -48,7 +48,7 @@ let args_xh = {
      * C商品原价99元，试用价1元，如果下面设置为50，那么C商品将会被加入到待提交的试用组
      * 默认为0
      * */
-    jdPrice: process.env.JD_TRY_PRICE * 1 || 0,
+    jdPrice: process.env.JD_TRY_PRICE * 1 || 20,
     /*
      * 获取试用商品类型，默认为1，原来不是数组形式，我以为就只有几个tab，结果后面还有我服了
      * 1 - 精选
@@ -119,7 +119,7 @@ let args_xh = {
      *
      * 不打印的优点：简短日志长度
      * 不打印的缺点：无法清晰知道每个商品为什么会被过滤，哪个商品被添加到了待提交试用组
-     * 可设置环境变量：JD_TRY_PLOG，默认为false
+     * 可设置环境变量：JD_TRY_PLOG，默认为true
      * */
     printLog: process.env.JD_TRY_PLOG || true,
     /*
@@ -207,8 +207,10 @@ let args_xh = {
                             break
                         }
                         await try_apply(trialActivityTitleList[i], trialActivityIdList[i])
-                        console.log(`间隔等待中，请等待 ${args_xh.applyInterval} ms\n`)
-                        await $.wait(args_xh.applyInterval);
+                        //console.log(`间隔等待中，请等待 ${args_xh.applyInterval} ms\n`)
+						const waitTime = generateRandomInteger(5000, 8000);
+						console.log(`随机等待${waitTime}ms后继续`);						
+                        await $.wait(waitTime);
                     }
                     console.log("试用申请执行完毕...")
                     // await try_MyTrials(1, 1)    //申请中的商品
@@ -216,7 +218,7 @@ let args_xh = {
                     $.successNum = 0;
                     $.getNum = 0;
                     $.completeNum = 0;
-                    await try_MyTrials(1, 2)    //申请成功的商品
+                    //await try_MyTrials(1, 2)    //申请成功的商品
                     // await try_MyTrials(1, 3)    //申请失败的商品
                     await showMsg()
                 }
@@ -564,15 +566,15 @@ async function showMsg(){
     if($.totalSuccess !== 0 && $.totalTry !== 0){
         message += `🎉 本次提交申请：${$.totalSuccess}/${$.totalTry}个商品🛒\n`;
         message += `🎉 ${$.successNum}个商品待领取\n`;
-        message += `🎉 ${$.getNum}个商品已领取\n`;
-        message += `🎉 ${$.completeNum}个商品已完成\n`;
-        message += `🗑 ${$.giveupNum}个商品已放弃\n\n`;
+        //message += `🎉 ${$.getNum}个商品已领取\n`;
+        //message += `🎉 ${$.completeNum}个商品已完成\n`;
+        //message += `🗑 ${$.giveupNum}个商品已放弃\n\n`;
     } else {
         message += `⚠️ 本次执行没有申请试用商品\n`;
         message += `🎉 ${$.successNum}个商品待领取\n`;
-        message += `🎉 ${$.getNum}个商品已领取\n`;
-        message += `🎉 ${$.completeNum}个商品已完成\n`;
-        message += `🗑 ${$.giveupNum}个商品已放弃\n\n`;
+        //message += `🎉 ${$.getNum}个商品已领取\n`;
+        //message += `🎉 ${$.completeNum}个商品已完成\n`;
+        //message += `🗑 ${$.giveupNum}个商品已放弃\n\n`;
     }
     if(!args_xh.jdNotify || args_xh.jdNotify === 'false'){
         $.msg($.name, ``, message, {
@@ -642,7 +644,17 @@ function jsonParse(str){
         }
     }
 }
-
+ const generateRandomInteger = (min, max = 0) => {
+   if (min > max) {
+     let temp = min;
+     min = max;
+     max = temp;
+   }
+   var Range = max - min;
+   var Rand = Math.random();
+   return min + Math.round(Rand * Range);
+ };
+ 
 function Env(name, opts){
     class Http{
         constructor(env){
